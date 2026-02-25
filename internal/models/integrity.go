@@ -1,11 +1,11 @@
 package models
 
 type GenerateNonceResponse struct {
-	Nonce string `json:"nonce"`
+	Nonce string `json:"token"`
 }
 
 type VerifyNonceRequest struct {
-	Nonce string `json:"nonce"`
+	Nonce string `json:"token"`
 }
 
 type VerifyNonceResponse struct {
