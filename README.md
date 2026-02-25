@@ -1,6 +1,9 @@
 # Google Play Integrity API
 HTTP server to handle Google Play Integrity API requests
 
+# Note
+If you have stumbled upon this repo today, it's very early on and does not currently contain all the features required for a full end-to-end implementation of the integrity API.  Feel free to follow along this journey as it gets fleshed out.
+
 ## Usage
 ### Start the server
 `go run ./cmd/server/`
