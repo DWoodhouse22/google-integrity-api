@@ -22,7 +22,7 @@ func NewIntegrityHandler(nonceService *services.NonceService) *IntegrityHandler 
 func (h *IntegrityHandler) GenerateNonce(w http.ResponseWriter, r *http.Request) {
 	nonce, err := h.nonceService.Generate()
 	if err != nil {
-		httputil.WriteError(w, http.StatusInternalServerError, "failed to generate nonce")
+		httputil.WriteError(w, http.StatusInternalServerError, "failed to generate one-time token")
 		return
 	}
 
@@ -46,7 +46,7 @@ func (h *IntegrityHandler) VerifyNonce(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if req.Nonce == "" {
-		httputil.WriteError(w, http.StatusBadRequest, "nonce required")
+		httputil.WriteError(w, http.StatusBadRequest, "one-time token required")
 		return
 	}
 

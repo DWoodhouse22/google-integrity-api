@@ -7,6 +7,6 @@ import (
 )
 
 func RegisterRoutes(mux *http.ServeMux, handler *handlers.IntegrityHandler) {
-	mux.HandleFunc("/nonce/generate", handler.GenerateNonce)
-	mux.HandleFunc("/nonce/verify", handler.VerifyNonce)
+	mux.HandleFunc("/token/generate", handler.GenerateNonce)
+	mux.HandleFunc("/token/verify", handler.VerifyNonce)
 }
