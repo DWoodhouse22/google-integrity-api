@@ -1,4 +1,4 @@
-# google-integrity-api
+# Google Play Integrity API
 HTTP server to handle Google Play Integrity API requests
 
 ## Usage
