@@ -73,13 +73,24 @@ func (h *IntegrityHandler) VerifyToken(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	result, err := h.integrityService.DecodeToken(req.Token)
+	decodedToken, err := h.integrityService.DecodeToken(req.Token)
 	if err != nil {
-		response.WriteError(w, http.StatusUnauthorized, "failed to decode integrity token")
+		response.WriteError(w, http.StatusBadRequest, "failed to decode integrity token")
+		return
+	}
+
+	nonce := decodedToken.TokenPayloadExternal.RequestDetails.RequestHash
+	if !h.nonceService.Consume(nonce) {
+		response.WriteError(w, http.StatusUnauthorized, "invalid nonce")
+		return
+	}
+
+	if ok, reason := h.integrityService.ValidateToken(decodedToken); !ok {
+		response.WriteError(w, http.StatusUnauthorized, reason)
 		return
 	}
 
 	response.WriteSuccess(w, http.StatusOK, models.VerifyIntegrityTokenResponse{
-		Verdict: result.TokenPayloadExternal,
+		Verdict: "valid",
 	})
 }
