@@ -79,14 +79,20 @@ func (h *IntegrityHandler) VerifyToken(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	nonce := decodedToken.TokenPayloadExternal.RequestDetails.RequestHash
-	if !h.nonceService.Consume(nonce) {
-		response.WriteError(w, http.StatusUnauthorized, "invalid nonce")
+	requestHash := decodedToken.TokenPayloadExternal.RequestDetails.RequestHash
+	if !h.nonceService.Consume(requestHash) {
+		response.WriteSuccess(w, http.StatusOK, models.VerifyIntegrityTokenResponse{
+			Verdict: "invalid",
+			Reason:  "invalid request hash",
+		})
 		return
 	}
 
 	if ok, reason := h.integrityService.ValidateToken(decodedToken); !ok {
-		response.WriteError(w, http.StatusUnauthorized, reason)
+		response.WriteSuccess(w, http.StatusOK, models.VerifyIntegrityTokenResponse{
+			Verdict: "invalid",
+			Reason:  reason,
+		})
 		return
 	}
 

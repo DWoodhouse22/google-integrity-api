@@ -18,4 +18,5 @@ type VerifyIntegrityTokenRequest struct {
 
 type VerifyIntegrityTokenResponse struct {
 	Verdict string `json:"verdict"`
+	Reason  string `json:"reason,omitempty"`
 }
