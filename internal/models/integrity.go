@@ -17,5 +17,5 @@ type VerifyIntegrityTokenRequest struct {
 }
 
 type VerifyIntegrityTokenResponse struct {
-	Verdict any `json:"verdict"`
+	Verdict string `json:"verdict"`
 }
