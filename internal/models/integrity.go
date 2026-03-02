@@ -1,14 +1,14 @@
 package models
 
-type GenerateNonceResponse struct {
-	Nonce string `json:"token"`
+type GenerateTokenResponse struct {
+	Token string `json:"token"`
 }
 
-type VerifyNonceRequest struct {
-	Nonce string `json:"token"`
+type VerifyTokenRequest struct {
+	Token string `json:"token"`
 }
 
-type VerifyNonceResponse struct {
+type VerifyTokenResponse struct {
 	Valid bool `json:"valid"`
 }
 
