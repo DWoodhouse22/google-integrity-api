@@ -10,53 +10,30 @@ import (
 )
 
 type IntegrityHandler struct {
-	nonceService     *services.NonceService
+	tokenService     *services.TokenService
 	integrityService *services.IntegrityService
 }
 
-func NewIntegrityHandler(nonceService *services.NonceService, integrityService *services.IntegrityService) *IntegrityHandler {
+func NewIntegrityHandler(tokenService *services.TokenService, integrityService *services.IntegrityService) *IntegrityHandler {
 	return &IntegrityHandler{
-		nonceService:     nonceService,
+		tokenService:     tokenService,
 		integrityService: integrityService,
 	}
 }
 
-func (h *IntegrityHandler) GenerateNonce(w http.ResponseWriter, r *http.Request) {
-	nonce, err := h.nonceService.Generate()
+func (h *IntegrityHandler) GenerateToken(w http.ResponseWriter, r *http.Request) {
+	token, err := h.tokenService.Generate()
 	if err != nil {
 		response.WriteError(w, http.StatusInternalServerError, "failed to generate one-time token")
 		return
 	}
 
-	response.WriteSuccess(w, http.StatusOK, models.GenerateNonceResponse{
-		Nonce: nonce,
+	response.WriteSuccess(w, http.StatusOK, models.GenerateTokenResponse{
+		Token: token,
 	})
 }
 
-func (h *IntegrityHandler) VerifyNonce(w http.ResponseWriter, r *http.Request) {
-	if r.Method != http.MethodPost {
-		response.WriteError(w, http.StatusMethodNotAllowed, "method not allowed")
-		return
-	}
-
-	var req models.VerifyNonceRequest
-	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
-		response.WriteError(w, http.StatusBadRequest, "invalid request body")
-		return
-	}
-
-	if req.Nonce == "" {
-		response.WriteError(w, http.StatusBadRequest, "one-time token required")
-		return
-	}
-
-	valid := h.nonceService.Consume(req.Nonce)
-	response.WriteSuccess(w, http.StatusOK, models.VerifyNonceResponse{
-		Valid: valid,
-	})
-}
-
-func (h *IntegrityHandler) VerifyToken(w http.ResponseWriter, r *http.Request) {
+func (h *IntegrityHandler) VerifyIntegrityToken(w http.ResponseWriter, r *http.Request) {
 	if r.Method != http.MethodPost {
 		response.WriteError(w, http.StatusMethodNotAllowed, "method not allowed")
 		return
@@ -80,7 +57,7 @@ func (h *IntegrityHandler) VerifyToken(w http.ResponseWriter, r *http.Request) {
 	}
 
 	requestHash := decodedToken.TokenPayloadExternal.RequestDetails.RequestHash
-	if !h.nonceService.Consume(requestHash) {
+	if !h.tokenService.Consume(requestHash) {
 		response.WriteSuccess(w, http.StatusOK, models.VerifyIntegrityTokenResponse{
 			Verdict: "invalid",
 			Reason:  "invalid request hash",
