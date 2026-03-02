@@ -11,13 +11,13 @@ import (
 )
 
 func main() {
-	nonceRepo := repositories.NewNonceRepository()
-	nonceService := services.NewNonceService(nonceRepo)
+	tokenRepo := repositories.NewTokenRepository()
+	tokenService := services.NewTokenService(tokenRepo)
 	integrityService, err := services.NewIntegrityService()
 	if err != nil {
 		panic(err)
 	}
-	handler := handlers.NewIntegrityHandler(nonceService, integrityService)
+	handler := handlers.NewIntegrityHandler(tokenService, integrityService)
 
 	mux := http.NewServeMux()
 	routes.RegisterRoutes(mux, handler)
